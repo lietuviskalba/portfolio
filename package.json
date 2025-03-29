@@ -1,0 +1,11 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "devstart": "concurrently \"yarn --cwd server dev\" \"yarn --cwd client start\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
