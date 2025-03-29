@@ -1,0 +1,16 @@
+/* client/src/components/NavBar.module.css */
+.nav {
+  padding: 1rem;
+  border-bottom: 1px solid #e61010;
+}
+
+.navList {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}
+
+.link {
+  text-decoration: none;
+  color: inherit;
+}
