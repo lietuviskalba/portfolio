@@ -2,7 +2,7 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-const rateLimit = require("express-rate-limit"); // Import rate limiter
+const rateLimit = require("express-rate-limit");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -13,8 +13,6 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
   message: "Too many requests from this IP, please try again after 15 minutes.",
 });
-
-// Apply the rate limiter to all requests
 app.use(limiter);
 
 // *** Activity Tracking Middleware ***
@@ -29,13 +27,17 @@ app.use((req, res, next) => {
   });
 });
 
-// Serve static files from the React app build folder
-app.use(express.static(path.join(__dirname, "../client/build")));
+// Serve the portfolio's static files under the /portfolio path.
+app.use("/portfolio", express.static(path.join(__dirname, "../client/build")));
 
-// Catch-all handler: for any request that doesn't match an API route,
-// send back React's index.html file.
-app.get("*", (req, res) => {
+// Catch-all route for portfolio subpaths (e.g., /portfolio/admin, /portfolio/anything)
+app.get("/portfolio/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+});
+
+// Optionally, redirect the root URL to /portfolio
+app.get("/", (req, res) => {
+  res.redirect("/portfolio");
 });
 
 app.listen(port, () => {
