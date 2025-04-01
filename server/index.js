@@ -1,13 +1,24 @@
 // server/index.js
 const express = require("express");
 const path = require("path");
-const fs = require("fs"); // Added to update the activity file
+const fs = require("fs");
+const rateLimit = require("express-rate-limit"); // Import rate limiter
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware to record activity
+// *** Rate Limiting Middleware ***
+// Limit each IP to 100 requests per 15 minutes.
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again after 15 minutes.",
+});
+
+// Apply the rate limiter to all requests
+app.use(limiter);
+
+// *** Activity Tracking Middleware ***
 // This middleware updates the /tmp/last_web_activity file on every HTTP request.
-// An external script can use this file's modification time to determine inactivity.
 app.use((req, res, next) => {
   const activityFile = "/tmp/last_web_activity";
   fs.writeFile(activityFile, Date.now().toString(), (err) => {
